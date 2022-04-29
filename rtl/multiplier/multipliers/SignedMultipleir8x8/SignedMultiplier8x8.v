@@ -8,9 +8,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     wire[12:0] pp01,pp02;
     wire[11:0] pp03;
 
-    
-
-
+    wire[15:0] pp0,pp1;
 
     ModRadix4BoothGen MR4BG0
     #(
@@ -60,6 +58,24 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     SignextSign8x8 singext
     (
         .*
+    );
+
+    WallaceTreeSigned8x8 wtree
+    (
+        .*
+    );
+
+    KSA 
+    #(
+        .wididx(3)
+    ) 
+    adder
+    (
+        .A      (pp0),
+        .B      (pp1),
+        .Cin    (1'b0),
+        .Sum    (out),
+        .Cout   ()
     );
 
 endmodule
