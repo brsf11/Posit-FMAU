@@ -8,11 +8,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     wire[12:0] pp01,pp02;
     wire[11:0] pp03;
 
-    wire[13:0] pp10;
-    wire[14:0] pp11;
-
-    wire[15:0] pp20;
-    wire[15:0] pp21;
+    
 
 
 
@@ -58,6 +54,12 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
         .A      (A),
         .gen    (gen[35:27]),
         .sign   (sign[3])
+    );
+
+
+    SignextSign8x8 singext
+    (
+        .*
     );
 
 endmodule
