@@ -1,5 +1,5 @@
 module Compressor32(input wire  x1,x2,x3,
-                    output wire s,c);
+                    output reg  s,c);
 
     always @(*) begin
         case({x1,x2,x3})

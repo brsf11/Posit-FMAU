@@ -1,5 +1,5 @@
 module Compressor42(input wire  x1,x2,x3,cin,
-                    output wire cout,c,s);
+                    output reg  cout,c,s);
 
     always @(*) begin
         case({x1,x2,x3,cin})
