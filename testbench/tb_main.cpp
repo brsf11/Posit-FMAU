@@ -59,17 +59,16 @@ int main(int argc, char** argv, char** env)
     {
         long long errNumTol=0;
         cout<<"Bitwidth = 8"<<endl;
-        int i,j,out;
-        top->Cin = 0;
-        for(i=0;i<256;i++)
+        int i,j;
+
+        for(i=-128;i<127;i++)
         {
-            for(j=0;j<256;j++)
+            for(j=-128;j<127;j++)
             {
                 top->A = i;
                 top->B = j;
                 top->eval();
-                out = top->Cout;
-                temp = top->Sum + (out << 8) - (i+j) - top->Cin;
+                temp = (int)top->out - (i*j);
                 TolEr += temp;
                 TolSE += (temp*temp);
                 if(abs(temp) > MaxEr)
@@ -81,7 +80,7 @@ int main(int argc, char** argv, char** env)
                     errNumTol++;
                 }
 
-                res<<(unsigned)top->Sum + (out << 8)<<" ";
+                res<<(int)top->out<<" ";
                 err<<temp<<" ";
                 ser<<temp*temp<<" ";
             }
@@ -135,11 +134,11 @@ int main(int argc, char** argv, char** env)
 
         for(int i=0;i<ItrNum;i++)
         {
-            tempA = top->A = u_rand(random);
-            tempB = top->B = u_rand(random);
+            tempA = top->A = u_rand(random)-exp2(bitwidth-1);
+            tempB = top->B = u_rand(random)-exp2(bitwidth-1);
             top->eval();
-            out = top->Cout;
-            temp = top->Sum + (out << bitwidth) - (tempA+tempB) - top->Cin;
+
+            temp = (int)top->out - (tempA*tempB);
             if(temp != 0)
             {
                 errNumTol++;
@@ -155,7 +154,7 @@ int main(int argc, char** argv, char** env)
             {
                 axsA<<tempA<<" ";
                 axsB<<tempB<<" ";
-                sres<<(unsigned)(top->Sum + (out << bitwidth))<<" ";
+                sres<<(int)top->out<<" ";
             }
         }
 
