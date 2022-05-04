@@ -4,7 +4,7 @@ module Radix4BoothGen #(
 (
     input wire[2:0]       B,
     input wire[width-1:0] A,
-    output wire[width:0]  gen
+    output reg[width:0]   gen
 );
 
     wire[width-1:0] negA;

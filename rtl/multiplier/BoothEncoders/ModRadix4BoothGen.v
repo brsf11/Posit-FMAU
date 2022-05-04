@@ -4,8 +4,8 @@ module ModRadix4BoothGen #(
 (
     input wire[2:0]       B,
     input wire[width-1:0] A,
-    output wire[width:0]  gen,
-    output wire           sign
+    output reg[width:0]   gen,
+    output reg            sign
 );
 
     wire[width-1:0] negA;

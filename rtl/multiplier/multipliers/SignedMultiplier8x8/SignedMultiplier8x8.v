@@ -10,10 +10,10 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
 
     wire[15:0] pp0,pp1;
 
-    ModRadix4BoothGen MR4BG0
+    ModRadix4BoothGen 
     #(
         .width(8)
-    )
+    ) MR4BG0
     (
         .B      ({B[1:0],1'b0}),
         .A      (A),
@@ -21,10 +21,10 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
         .sign   (sign[0])
     );
 
-    ModRadix4BoothGen MR4BG1
+    ModRadix4BoothGen 
     #(
         .width(8)
-    )
+    ) MR4BG1
     (
         .B      (B[3:1]),
         .A      (A),
@@ -32,23 +32,23 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
         .sign   (sign[1])
     );
 
-    ModRadix4BoothGen MR4BG2
+    ModRadix4BoothGen 
     #(
         .width(8)
-    )
+    ) MR4BG2
     (
-        .B      ({B[5:3]),
+        .B      (B[5:3]),
         .A      (A),
         .gen    (gen[26:18]),
         .sign   (sign[2])
     );
 
-    ModRadix4BoothGen MR4BG3
+    ModRadix4BoothGen 
     #(
         .width(8)
-    )
+    ) MR4BG3
     (
-        .B      ({B[7:5]),
+        .B      (B[7:5]),
         .A      (A),
         .gen    (gen[35:27]),
         .sign   (sign[3])
@@ -68,8 +68,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     KSA 
     #(
         .wididx(3)
-    ) 
-    adder
+    ) adder
     (
         .A      (pp0),
         .B      (pp1),
