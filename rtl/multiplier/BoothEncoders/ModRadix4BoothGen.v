@@ -14,15 +14,43 @@ module ModRadix4BoothGen #(
 
     always @(*) begin
         case(B)
-            3'b000:  {sign,gen} = '0;
-            3'b001:  {sign,gen} = {0,0,A};
-            3'b010:  {sign,gen} = {0,0,A};
-            3'b011:  {sign,gen} = {0,A,0};
-            3'b100:  {sign,gen} = {1,negA,0};
-            3'b101:  {sign,gen} = {1,1,negA};
-            3'b110:  {sign,gen} = {1,1,negA};
-            3'b111:  {sign,gen} = '0;
-            default: {sign,gen} = '0;
+            3'b000:  sign = 1'b0;
+            3'b001:  sign = 1'b0;
+            3'b010:  sign = 1'b0;
+            3'b011:  sign = 1'b0;
+            3'b100:  sign = 1'b1;
+            3'b101:  sign = 1'b1;
+            3'b110:  sign = 1'b1;
+            3'b111:  sign = 1'b0;
+            default: sign = 1'b0;
+        endcase
+    end
+
+    always @(*) begin
+        case(B)
+            3'b000:  gen[width] = 1'b0;
+            3'b001:  gen[width] = 1'b0;
+            3'b010:  gen[width] = 1'b0;
+            3'b011:  gen[width] = A[width-1];
+            3'b100:  gen[width] = negA[width-1];
+            3'b101:  gen[width] = 1'b1;
+            3'b110:  gen[width] = 1'b1;
+            3'b111:  gen[width] = 1'b0;
+            default: gen[width] = 1'b0;
+        endcase
+    end
+
+    always @(*) begin
+        case(B)
+            3'b000:  gen[width-1:0] = 0;
+            3'b001:  gen[width-1:0] = A;
+            3'b010:  gen[width-1:0] = A;
+            3'b011:  gen[width-1:0] = {A[width-2:0],1'b0};
+            3'b100:  gen[width-1:0] = {negA[width-2:0],1'b0};
+            3'b101:  gen[width-1:0] = negA;
+            3'b110:  gen[width-1:0] = negA;
+            3'b111:  gen[width-1:0] = 0;
+            default: gen[width-1:0] = 0;
         endcase
     end
 

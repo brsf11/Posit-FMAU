@@ -67,7 +67,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
 
     KSA 
     #(
-        .wididx(3)
+        .wididx(4)
     ) adder
     (
         .A      (pp0),

@@ -122,7 +122,6 @@ int main(int argc, char** argv, char** env)
         uniform_int_distribution<unsigned> u_rand(0, exp2(bitwidth)-1);
 
         long long out,tempA,tempB,errNumTol=0;
-        top->Cin = 0;
 
         long long errnum[33];
         double errrate[33];

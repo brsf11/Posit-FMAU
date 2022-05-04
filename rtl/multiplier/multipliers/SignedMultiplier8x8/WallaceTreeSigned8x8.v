@@ -50,7 +50,7 @@ module WallaceTreeSigned8x8(input wire[11:0]  pp00,pp03,
     assign pp20[15]  = pp03[11];
 
     generate
-        for(i=4;i<=14;i=i+1)begin
+        for(i=4;i<=13;i=i+1)begin
             Compressor32 cp1
             (
                 .x1     (pp10[i]),
@@ -61,6 +61,15 @@ module WallaceTreeSigned8x8(input wire[11:0]  pp00,pp03,
             );
         end
     endgenerate
+
+    Compressor32 cp11
+    (
+        .x1     (pp10[14]),
+        .x2     (1'b0),
+        .x3     (pp03[10]),
+        .s      (pp20[14]),
+        .c      (pp21[15])
+    );
 
     //CSA level 3
 
