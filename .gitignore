@@ -2,3 +2,4 @@ syn/
 data/
 obj_dir/
 iverilog_build/
+modelsim/
