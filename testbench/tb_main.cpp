@@ -68,7 +68,7 @@ int main(int argc, char** argv, char** env)
                 top->A = i;
                 top->B = j;
                 top->eval();
-                temp = (int)top->out - (i*j);
+                temp = ((((int)top->out) << 16) >> 16) - (i*j);
                 TolEr += temp;
                 TolSE += (temp*temp);
                 if(abs(temp) > MaxEr)
@@ -80,7 +80,7 @@ int main(int argc, char** argv, char** env)
                     errNumTol++;
                 }
 
-                res<<(int)top->out<<" ";
+                res<<((((int)top->out) << 16) >> 16)<<" ";
                 err<<temp<<" ";
                 ser<<temp*temp<<" ";
             }

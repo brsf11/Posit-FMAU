@@ -74,16 +74,16 @@ module WallaceTreeSigned8x8(input wire[11:0]  pp00,pp03,
     //CSA level 3
 
     assign pp30[5:0] = pp20[5:0];
-    assign pp31[5:0] = pp31[5:0];
+    assign pp31[5:0] = pp21[5:0];
     assign pp31[6]   = 1'b0;
 
     Compressor32 cp20
     (
         .x1     (pp20[6]),
         .x2     (pp21[6]),
-        .x3     (1'b1),
-        .s      (pp20[6]),
-        .c      (pp21[7])
+        .x3     (~pp03[11]),
+        .s      (pp30[6]),
+        .c      (pp31[7])
     );
 
     generate

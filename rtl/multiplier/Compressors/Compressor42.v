@@ -23,4 +23,4 @@ module Compressor42(input wire  x1,x2,x3,cin,
         endcase
     end
 
-module
+endmodule
