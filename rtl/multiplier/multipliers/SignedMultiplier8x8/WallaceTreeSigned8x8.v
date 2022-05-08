@@ -1,13 +1,12 @@
-module WallaceTreeSigned8x8(input wire[10:0]  pp00,
-                            input wire[11:0]  pp01,pp02,pp03,
+module WallaceTreeSigned8x8(input wire[11:0]  pp00,pp03,
+                            input wire[12:0]  pp01,pp02,
                             input wire        sign3,
                             output wire[15:0] pp0,pp1);
 
-    wire[13:0] pp10;
-    wire[12:0] pp11;
+    wire[14:0] pp10;
+    wire[13:0] pp11;
 
-    wire[15:0] pp20;
-    wire[14:0] pp21;
+    wire[15:0] pp20,pp21;
     
     wire[15:0] pp30,pp31;
 
@@ -19,10 +18,10 @@ module WallaceTreeSigned8x8(input wire[10:0]  pp00,
     assign pp11[1:0] = pp01[1:0];
     assign pp11[2]   = 1'b0;
 
-    assign pp10[13:12]  = pp02[11:10];
+    assign pp10[14:13]  = pp02[12:11];
 
     generate
-        for(i=2;i<=10;i=i+1)begin
+        for(i=2;i<=11;i=i+1)begin
             Compressor32 cp0
             (
                 .x1     (pp00[i]),
@@ -37,10 +36,10 @@ module WallaceTreeSigned8x8(input wire[10:0]  pp00,
     Compressor32 cp01
     (
         .x1     (1'b0),
-        .x2     (pp01[11]),
-        .x3     (pp02[9]),
-        .s      (pp10[11]),
-        .c      (pp11[12])
+        .x2     (pp01[12]),
+        .x3     (pp02[10]),
+        .s      (pp10[12]),
+        .c      (pp11[13])
     );
 
     //CSA level 2
@@ -52,7 +51,7 @@ module WallaceTreeSigned8x8(input wire[10:0]  pp00,
     assign pp20[15:14]  = pp03[11:10];
 
     generate
-        for(i=4;i<=12;i=i+1)begin
+        for(i=4;i<=13;i=i+1)begin
             Compressor32 cp1
             (
                 .x1     (pp10[i]),
@@ -66,11 +65,11 @@ module WallaceTreeSigned8x8(input wire[10:0]  pp00,
 
     Compressor32 cp11
     (
-        .x1     (pp10[13]),
+        .x1     (pp10[14]),
         .x2     (1'b0),
-        .x3     (pp03[9]),
-        .s      (pp20[13]),
-        .c      (pp21[14])
+        .x3     (pp03[10]),
+        .s      (pp20[14]),
+        .c      (pp21[15])
     );
 
     //CSA level 3
@@ -102,6 +101,15 @@ module WallaceTreeSigned8x8(input wire[10:0]  pp00,
             );
         end
     endgenerate
+
+    Compressor32 cp21
+    (
+        .x1     (pp20[15]),
+        .x2     (pp21[15]),
+        .x3     (1'b0),
+        .s      (pp30[15]),
+        .c      ()
+    );
 
     //Output
 

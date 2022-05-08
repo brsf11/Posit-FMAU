@@ -4,8 +4,8 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     wire[35:0]  gen;
     wire[3:0]   sign;
 
-    wire[10:0] pp00;
-    wire[11:0] pp01,pp02,pp03;
+    wire[11:0] pp00,pp03;
+    wire[12:0] pp01,pp02;
 
     wire[15:0] pp0,pp1;
 

@@ -46,7 +46,7 @@ module ModRadix4BoothGen #(
             3'b001:  gen[width-1:0] = A;
             3'b010:  gen[width-1:0] = A;
             3'b011:  gen[width-1:0] = {A[width-2:0],1'b0};
-            3'b100:  gen[width-1:0] = {negA[width-2:0],1'b0};
+            3'b100:  gen[width-1:0] = {negA[width-2:0],1'b1};
             3'b101:  gen[width-1:0] = negA;
             3'b110:  gen[width-1:0] = negA;
             3'b111:  gen[width-1:0] = 0;
