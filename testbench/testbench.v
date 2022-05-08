@@ -9,8 +9,8 @@ module testbench();
     );
 
     initial begin
-        A = 8'b1111_1011;
-        B = 8'd60;
+        A = 8'b10000000;
+        B = 8'b10000000;
     end
 
     initial begin

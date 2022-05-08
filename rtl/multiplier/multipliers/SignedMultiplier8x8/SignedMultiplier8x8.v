@@ -4,9 +4,8 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     wire[35:0]  gen;
     wire[3:0]   sign;
 
-    wire[11:0] pp00;
-    wire[12:0] pp01,pp02;
-    wire[11:0] pp03;
+    wire[10:0] pp00;
+    wire[11:0] pp01,pp02,pp03;
 
     wire[15:0] pp0,pp1;
 
@@ -62,6 +61,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
 
     WallaceTreeSigned8x8 wtree
     (
+        .sign3  (sign[3]),
         .*
     );
 

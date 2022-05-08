@@ -29,12 +29,12 @@ module ModRadix4BoothGen #(
     always @(*) begin
         case(B)
             3'b000:  gen[width] = 1'b0;
-            3'b001:  gen[width] = 1'b0;
-            3'b010:  gen[width] = 1'b0;
+            3'b001:  gen[width] = A[width-1];
+            3'b010:  gen[width] = A[width-1];
             3'b011:  gen[width] = A[width-1];
             3'b100:  gen[width] = negA[width-1];
-            3'b101:  gen[width] = 1'b1;
-            3'b110:  gen[width] = 1'b1;
+            3'b101:  gen[width] = negA[width-1];
+            3'b110:  gen[width] = negA[width-1];
             3'b111:  gen[width] = 1'b0;
             default: gen[width] = 1'b0;
         endcase
