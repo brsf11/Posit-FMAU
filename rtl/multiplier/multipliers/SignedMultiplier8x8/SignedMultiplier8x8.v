@@ -54,7 +54,7 @@ module SignedMultiplier8x8(input wire[7:0]   A,B,
     );
 
 
-    SignextSign8x8 singext
+    SignextSigned8x8 singext
     (
         .*
     );

@@ -1,7 +1,7 @@
-module SignextSigned8x8(input wire[35:0]  gen,
-                      input wire[3:0]   sign,
-                      output wire[11:0] pp00,pp03,
-                      output wire[12:0] pp01,pp02);
+module SignextUnsigned7x7(input wire[35:0]  gen,
+                          input wire[3:0]   sign,
+                          output wire[11:0] pp00,pp03,
+                          output wire[12:0] pp01,pp02);
 
     wire[3:0] e,ne;
 
