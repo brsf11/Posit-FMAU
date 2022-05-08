@@ -48,7 +48,7 @@ module WallaceTreeSigned8x8(input wire[11:0]  pp00,pp03,
     assign pp21[3:0] = pp11[3:0];
     assign pp21[4]   = 1'b0;
 
-    assign pp20[15:14]  = pp03[11:10];
+    assign pp20[15]  = pp03[11];
 
     generate
         for(i=4;i<=13;i=i+1)begin
