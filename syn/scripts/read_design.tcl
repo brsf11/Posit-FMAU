@@ -1,0 +1,3 @@
+set flist {../../rtl/adder/Kogge-Stone/KSA.v ../../rtl/adder/Kogge-Stone/PG.v ../../rtl/multiplier/BoothEncoders/ModRadix4BoothGen.v ../../rtl/multiplier/Compressors/Compressor32.v ../../rtl/multiplier/multipliers/SignedMultiplier8x8/WallaceTreeSigned8x8.v ../../rtl/multiplier/multipliers/SignedMultiplier8x8/SignextSigned8x8.v ../../rtl/multiplier/multipliers/SignedMultiplier8x8/SignedMultiplier8x8.v}
+analyze -format sverilog $flist
+elaborate SignedMultiplier8x8
