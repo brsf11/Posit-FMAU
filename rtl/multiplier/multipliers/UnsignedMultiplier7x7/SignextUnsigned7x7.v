@@ -1,17 +1,16 @@
-module SignextUnsigned7x7(input wire[35:0]  gen,
-                          input wire[3:0]   sign,
-                          output wire[11:0] pp00,pp02,
-                          output wire[12:0] pp01,
+module SignextUnsigned7x7(input wire[31:0]  gen,
+                          input wire[2:0]   sign,
+                          output wire[10:0] pp00,
+                          output wire[11:0] pp01,pp02,
                           output wire[9:0]  pp03);
 
-    wire[3:0] e,ne;
+    wire[2:0] ns;
+    
+    assign ns = ~sign;
 
-    assign e  = ~{gen[35],gen[26],gen[17],gen[8]};
-    assign ne = ~e;
-
-    assign pp00 = {e[0],ne[0],ne[0],gen[8:0]};
-    assign pp01 = {1'b1,e[1],gen[17:9],1'b0,sign[0]};
-    assign pp02 = {e[2],gen[26:18],1'b0,sign[1]};
-    assign pp03 = {gen[34:27],1'b0,sign[2]};
+    assign pp00 = {sign[0],ns[0],ns[0],gen[7:0]};
+    assign pp01 = {1'b1,sign[1],gen[15:8],1'b0,sign[0]};
+    assign pp02 = {1'b1,sign[2],gen[23:16],1'b0,sign[1]};
+    assign pp03 = {gen[31:24],1'b0,sign[2]};
 
 endmodule
