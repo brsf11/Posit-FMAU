@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-module testbench();
+module testbench_s88();
 
     reg[7:0]   A,B;
     wire[15:0] out;
@@ -11,11 +11,6 @@ module testbench();
     initial begin
         A = 8'b10000000;
         B = 8'b10000000;
-    end
-
-    initial begin
-        $dumpfile("wave.vcd");
-        $dumpvars(0,testbench); 
     end
 
 endmodule

@@ -11,7 +11,7 @@ module UnsignedMultiplier7x7(input wire[6:0]   A,B,
 
     wire[15:0] tout;
 
-    ModRadix4BoothGen 
+    ModUnsignedRadix4BoothGen 
     #(
         .width(7)
     ) MR4BG0
@@ -22,7 +22,7 @@ module UnsignedMultiplier7x7(input wire[6:0]   A,B,
         .sign   (sign[0])
     );
 
-    ModRadix4BoothGen 
+    ModUnsignedRadix4BoothGen 
     #(
         .width(7)
     ) MR4BG1
@@ -33,7 +33,7 @@ module UnsignedMultiplier7x7(input wire[6:0]   A,B,
         .sign   (sign[1])
     );
 
-    ModRadix4BoothGen 
+    ModUnsignedRadix4BoothGen 
     #(
         .width(7)
     ) MR4BG2
@@ -44,7 +44,7 @@ module UnsignedMultiplier7x7(input wire[6:0]   A,B,
         .sign   (sign[2])
     );
 
-    ModRadix4BoothGen 
+    ModUnsignedRadix4BoothGen 
     #(
         .width(7)
     ) MR4BG3

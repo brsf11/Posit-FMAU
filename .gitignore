@@ -3,3 +3,4 @@ data/
 obj_dir/
 iverilog_build/
 modelsim/
+!testbench/modelsim/
