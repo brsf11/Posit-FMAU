@@ -26,6 +26,12 @@ module MatissaMultipleir28x28(input wire[27:0]  A,B,
         end
     endgenerate
 
-    
+    MatissaPPGate28x28 gu(
+        .*
+    );
+
+    MatissaWallaceTree28x28 wtu(
+        .*
+    );
 
 endmodule
