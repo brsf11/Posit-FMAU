@@ -154,7 +154,17 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
     endgenerate
 
 
+    //Adder
 
+    wire ct;
 
+    assign ct = (op == 2'b00) | (op == 2'b01);
+
+    MatissaAdder48 madder(
+        .A      ({P0[55:50],P3[49:16],P0[15:8]}),
+        .B      ({5'b0,P4[50:17],1'b0,P1[15:8]}),
+        .ct     (ct),
+        .out    (out[55:8])
+    );
 
 endmodule
