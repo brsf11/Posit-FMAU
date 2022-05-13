@@ -10,7 +10,7 @@ module MatissaMultipleir28x28(input wire[27:0]  A,B,
     wire[48:35] PP34,PP43;
     wire[55:42] PP44;
 
-    wire[13:0]  pp[3:0][3:0];
+    wire[223:0]  p;
 
     genvar i,j;
 
@@ -20,7 +20,7 @@ module MatissaMultipleir28x28(input wire[27:0]  A,B,
                 UnsignedMultiplier7x7 mu(
                     .A      (A[i*4+3:i*4]),
                     .B      (B[i*4+3:i*4]),
-                    .out    (pp[i][j])
+                    .out    (p[i*14*4+j*14+13:i*14*4+j*14])
                 );
             end
         end

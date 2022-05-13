@@ -70,7 +70,7 @@ module MatissaAdder48(input wire[55:8]  A,B,
 
     //Sum Gen
 
-    assign hout0[28:0] = {Qh0[5][27:0] ^ PCh0[0][28:1] , PCh0[0][0]};
+    assign hout0[27:0] = Qh0[5][27:0] ^ PCh0[0][28:1];
 
 
     //h1 P Tree
@@ -103,7 +103,7 @@ module MatissaAdder48(input wire[55:8]  A,B,
 
     //Sum Gen
 
-    assign hout1[28:0] = {Qh1[5][27:0] ^ PCh1[0][28:1] , PCh1[0][0]};
+    assign hout1[27:0] = Qh1[5][27:0] ^ PCh1[0][28:1];
 
     //low adder
     //Low adder pg gen
@@ -111,10 +111,10 @@ module MatissaAdder48(input wire[55:8]  A,B,
     generate
         for(i=0;i<20;i=i+1)begin
             PG PG0(
-                .A    (A[i]),
-                .B    (B[i]),
+                .A    (A[i+8]),
+                .B    (B[i+8]),
                 .P    (PCl[0][i]),
-                .G    (Qhl[0][i])
+                .G    (Ql[0][i])
             );
         end
     endgenerate
@@ -149,7 +149,7 @@ module MatissaAdder48(input wire[55:8]  A,B,
 
     //Sum Gen
 
-    assign lout[28:0] = {Ql[5][18:0] ^ PCl[0][19:1] , PCl[0][0]};
+    assign lout[19:0] = {Ql[5][18:0] ^ PCl[0][19:1] , PCl[0][0]};
     assign cl         = Ql[5][19]&(~ct);
 
 

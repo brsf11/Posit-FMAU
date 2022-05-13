@@ -1,12 +1,24 @@
-module MatissaPPGate28x28(input wire[13:0]   pp[3:0][3:0],
+module MatissaPPGate28x28(input wire[223:0]  p,
                           input wire[1:0]    op,
-                          output wire[13:0]  PP11,
-                          output wire[20:7]  PP12,PP21,
-                          output wire[27:14] PP13,PP22,PP31,
-                          output wire[34:21] PP14,PP23,PP32,PP41,
-                          output wire[41:28] PP24,PP33,PP42,
-                          output wire[48:35] PP34,PP43,
-                          output wire[55:42] PP44);
+                          output reg[13:0]   PP11,
+                          output reg[20:7]   PP12,PP21,
+                          output reg[27:14]  PP13,PP22,PP31,
+                          output reg[34:21]  PP14,PP23,PP32,PP41,
+                          output reg[41:28]  PP24,PP33,PP42,
+                          output reg[48:35]  PP34,PP43,
+                          output reg[55:42]  PP44);
+
+    wire[13:0] pp[3:0][3:0];
+
+    genvar i,j;
+
+    generate
+        for(i=0;i<4;i=i+1)begin
+            for(j=0;j<4;j=j+1)begin
+                assign pp[i][j][13:0] = p[i*14*4+j*14+13:i*14*4+j*14];
+            end
+        end
+    endgenerate
 
     always @(*) begin
         case(op)

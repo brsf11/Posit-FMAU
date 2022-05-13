@@ -53,7 +53,7 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
                 .x5     (PP12[i]),
                 .s      (P0[i]),
                 .c1     (P1[i+1]),
-                .c2     (p2[i+2])
+                .c2     (P2[i+2])
             );
         end
     endgenerate
@@ -71,7 +71,7 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
                 .x7     (PP41[i]),
                 .s      (P0[i]),
                 .c1     (P1[i+1]),
-                .c2     (p2[i+2])
+                .c2     (P2[i+2])
             );
         end
     endgenerate
@@ -89,7 +89,7 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
                 .x7     (PP42[i]),
                 .s      (P0[i]),
                 .c1     (P1[i+1]),
-                .c2     (p2[i+2])
+                .c2     (P2[i+2])
             );
         end
     endgenerate
@@ -105,7 +105,7 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
                 .x5     (PP42[i]),
                 .s      (P0[i]),
                 .c1     (P1[i+1]),
-                .c2     (p2[i+2])
+                .c2     (P2[i+2])
             );
         end
     endgenerate
@@ -131,9 +131,9 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
         for(i=16;i<=43;i=i+1)begin
             Compressor32 C323
             (
-                .x1     (PP0[i]),
-                .x2     (PP1[i]),
-                .x3     (PP2[i]),
+                .x1     (P0[i]),
+                .x2     (P1[i]),
+                .x3     (P2[i]),
                 .s      (P3[i]),
                 .c      (P4[i+1])
             );
@@ -144,8 +144,8 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
         for(i=44;i<=49;i=i+1)begin
             Compressor32 C323
             (
-                .x1     (PP0[i]),
-                .x2     (PP1[i]),
+                .x1     (P0[i]),
+                .x2     (P1[i]),
                 .x3     (1'b0),
                 .s      (P3[i]),
                 .c      (P4[i+1])
