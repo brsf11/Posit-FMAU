@@ -22,7 +22,7 @@ module MatissaPPGate28x28(input wire[223:0]  p,
 
     always @(*) begin
         case(op)
-            1'b00:begin
+            2'b00:begin
                 PP11 = pp[0][0];
                 PP12 = 14'b0;
                 PP13 = 14'b0;
@@ -40,7 +40,7 @@ module MatissaPPGate28x28(input wire[223:0]  p,
                 PP43 = 14'b0;
                 PP44 = pp[3][3];
             end
-            1'b01:begin
+            2'b01:begin
                 PP11 = pp[0][0];
                 PP12 = pp[0][1];
                 PP13 = 14'b0;
@@ -58,7 +58,7 @@ module MatissaPPGate28x28(input wire[223:0]  p,
                 PP43 = pp[3][2];
                 PP44 = pp[3][3];
             end
-            1'b10:begin
+            2'b10:begin
                 PP11 = pp[0][0];
                 PP12 = pp[0][1];
                 PP13 = pp[0][2];

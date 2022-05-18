@@ -18,8 +18,8 @@ module MatissaMultipleir28x28(input wire[27:0]  A,B,
         for(i=0;i<4;i=i+1)begin
             for(j=0;j<4;j=j+1)begin
                 UnsignedMultiplier7x7 mu(
-                    .A      (A[i*4+3:i*4]),
-                    .B      (B[i*4+3:i*4]),
+                    .A      (A[i*7+6:i*7]),
+                    .B      (B[j*7+6:j*7]),
                     .out    (p[i*14*4+j*14+13:i*14*4+j*14])
                 );
             end

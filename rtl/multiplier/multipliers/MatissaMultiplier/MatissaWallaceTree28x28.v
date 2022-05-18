@@ -46,11 +46,11 @@ module MatissaWallaceTree28x28(input wire[13:0]  PP11,
         for(i=14;i<=20;i=i+1)begin
             Compressor53 C530
             (
-                .x1     (PP11[i]),
+                .x1     (PP13[i]),
                 .x2     (PP12[i]),
                 .x3     (PP21[i]),
-                .x4     (PP11[i]),
-                .x5     (PP12[i]),
+                .x4     (PP22[i]),
+                .x5     (PP31[i]),
                 .s      (P0[i]),
                 .c1     (P1[i+1]),
                 .c2     (P2[i+2])
