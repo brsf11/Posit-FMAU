@@ -1,15 +1,15 @@
 module posit_ext(
-    input   wire        clk,
+
     input   wire [31:0] in,
     input   wire [1:0]  mode,
-    output  reg [3:0]  s,
-    output  reg [15:0] rg_exp,
-    output  reg [27:0] mant
+    output  wire [3:0]  s,
+    output  wire [15:0] rg_exp,
+    output  wire [27:0] mant
 );
-//assign s[0]  = in[7];
-//assign s[1] = in[15];
-//assign s[2] = in[23];
-//assign s[3] = in[31];
+assign s[0]  = in[7];
+assign s[1] = in[15];
+assign s[2] = in[23];
+assign s[3] = in[31];
 wire [31:0] op_neg,exp_mant;
 posit_comp U0(in,mode,op_neg);
 wire [3:0]  cpm1;
@@ -22,9 +22,9 @@ wire [4:0]  cps ;
 posit_LZC U1(op_neg,mode,cpm1,cpm2,cpm3,cpm4,cph1,cph2,cps);
 left_shifter U2(op_neg,mode,cpm1,cpm2,cpm3,cpm4,cph1,cph2,cps,exp_mant);
 reg [27:0] mant_tmp;
-//assign mant = mant_tmp;
+assign mant = mant_tmp;
 reg [15:0] rg_exp_tmp;
-//assign rg_exp = rg_exp_tmp;
+assign rg_exp = rg_exp_tmp;
 always @(*) begin
     case(mode)
         2'b00:begin
@@ -49,12 +49,12 @@ always @(*) begin
         end
     endcase
 end
-always @(posedge clk) begin
-    mant <= mant_tmp;
-    s[0] <= in[7];
-    s[1] <= in[15];
-    s[2] <= in[23];
-    s[3] <= in[31];
-    rg_exp <= rg_exp_tmp;
-end
+//always @(posedge clk) begin
+//    mant <= mant_tmp;
+//    s[0] <= in[7];
+//    s[1] <= in[15];
+//    s[2] <= in[23];
+//    s[3] <= in[31];
+//    rg_exp <= rg_exp_tmp;
+//end
 endmodule

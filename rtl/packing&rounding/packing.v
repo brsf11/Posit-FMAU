@@ -1,16 +1,15 @@
 module packing(
-    input   wire        clk,
+
     input   wire    [1:0]   in_pre,
     input   wire    [67:0]  mant,
     input   wire    [3:0]   swap,
     input   wire    [19:0]  exp_E,
     input   wire    [19:0]  exp_F,
     input   wire    [3:0]   s_A,s_B,s_C,s_D,
-    output  reg    [31:0]  out
+    output  reg    [31:0]  out_r
 );
 
-reg [19:0] exp,exp_com,regime;
-reg [31:0] rg_sin;
+reg [19:0] exp,regime;
 wire [3:0] s;
 reg [19:0] REM1,REM2,REM3,REM4;
 reg [36:0] REM5,REM6;
@@ -33,8 +32,8 @@ reg [6:0] rnd_ulp_REM1,rnd_ulp_REM2,rnd_ulp_REM3,rnd_ulp_REM4;
 reg [6:0] ulp_REM1,ulp_REM2,ulp_REM3,ulp_REM4;
 reg [14:0] ulp_REM5,ulp_REM6,rnd_ulp_REM5,rnd_ulp_REM6;
 reg [30:0] ulp_REM7,rnd_ulp_REM7;
-reg [31:0] out_r;
-//assign out = {s[3],rnd_ulp_REM4,s[2],rnd_ulp_REM3,s[1],rnd_ulp_REM2,s[0],rnd_ulp_REM1};
+
+
 always@(*) begin
     case(in_pre)
         2'b00:begin
@@ -58,7 +57,7 @@ always@(*) begin
             R1[0] = REM1[3];
             St1[0] = REM1[2];
             ulp1[0] = ((G1[0] & (R1[0] | St1[0])) | (L1[0] & G1[0] & ~(R1[0] | St1[0])));
-            ulp_REM1 = REM1[11:5] + ulp1;
+            ulp_REM1 = REM1[11:5] + ulp1[0];
             rnd_ulp_REM1 = (regime[4:0] < 6) ? ulp_REM1 : REM1[11:5];
 
             L1[1] = REM2[5];
@@ -128,12 +127,10 @@ always@(*) begin
             St1[0] = REM7[4];
             ulp1[0] = ((G1[0] & (R1[0] | St1[0])) | (L1[0] & G1[0] & ~(R1[0] | St1[0])));
             ulp_REM7 = REM7[37:7] + ulp1[0];
-            rnd_ulp_REM7 = (regime[9:0] < 28) ? ulp_REM7 : REM5[37:7];
+            rnd_ulp_REM7 = (regime[9:0] < 28) ? ulp_REM7 : REM7[37:7];
             out_r = {s[3],rnd_ulp_REM7};
         end
     endcase
 end
-always @(posedge clk) begin
-        out <= out_r;
-    end
+
 endmodule
