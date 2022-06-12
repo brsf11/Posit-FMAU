@@ -1,0 +1,3 @@
+[submodule "bfp"]
+	path = bfp
+	url = https://github.com/libcg/bfp.git
