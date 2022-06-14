@@ -1,4 +1,6 @@
-all: s88
+cflags = -I./bfp/lib/
+
+all: top
 
 s88: build_SignedMultiplier8x8 run_SignedMultiplier8x8
 
@@ -18,6 +20,15 @@ build_UnsignedMultiplier7x7:
 
 run_UnsignedMultiplier7x7:
 	./obj_dir/VUnsignedMultiplier7x7 7
+
+top: build_top run_top
+
+build_top:
+	verilator --cc --build -f flist/top --exe ./testbench/verilator/tb_main_top.cpp -CFLAGS $(cflags) -Wno-UNOPTFLAT --autoflush --top-module top
+	echo "\n\n\n\n"
+
+run_top:
+	./obj_dir/top 32
 
 clean:
 	-rm -rf ./obj_dir/
