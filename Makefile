@@ -1,5 +1,6 @@
 CC = gcc
 CXX = g++
+VERILATOR = verilator
 FLAGS = -Ilib -Itest -O2 -Wall -g
 CFLAGS = -std=c99 $(FLAGS)
 CXXFLAGS = -std=c++11 $(FLAGS)
@@ -7,60 +8,28 @@ CXXFLAGS = -std=c++11 $(FLAGS)
 LIB_TARGET = lib/libbfp.a
 LIB_OBJ = bfp/lib/posit.o bfp/lib/pack.o bfp/lib/util.o bfp/lib/op1.o bfp/lib/op2.o
 
+TEST = top
+TEST_TARGET = ./obj_dir/V$(TEST)
+TEST_WIDTH = 32
+
 VCFLAGS = -I/home/brsf11/Code/Posit-FMAU/bfp/lib/ 
 VLFLAGS = -lbfp -L../lib/
+VFLAGS  = --cc --build --exe -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush
 
-all: top32
+all: $(TEST)
 
-s88: build_SignedMultiplier8x8 run_SignedMultiplier8x8
+$(TEST): $(TEST_TARGET)
+	$(TEST_TARGET) $(TEST_WIDTH)
 
-build_SignedMultiplier8x8:
-	verilator --cc --build -f flist/SignedMultiplier8x8 --exe ./testbench/verilator/tb_main_s88.cpp -Wno-UNOPTFLAT --autoflush --top-module SignedMultiplier8x8
-	echo "\n\n\n\n"
-
-run_SignedMultiplier8x8:
-	./obj_dir/VSignedMultiplier8x8 8
-
-
-u77: build_UnsignedMultiplier7x7 run_UnsignedMultiplier7x7
-
-build_UnsignedMultiplier7x7:
-	verilator --cc --build -f flist/UnsignedMultiplier7x7 --exe ./testbench/verilator/tb_main_u77.cpp -Wno-UNOPTFLAT --autoflush --top-module UnsignedMultiplier7x7
-	echo "\n\n\n\n"
-
-run_UnsignedMultiplier7x7:
-	./obj_dir/VUnsignedMultiplier7x7 7
-
-top32: TOP32_TARGET TOP32_RUN
-
-TOP32_TARGET: $(LIB_TARGET)
-	verilator --cc --build --exe -f flist/top ./testbench/verilator/tb_main_top_32.cpp -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --top-module top
-
-TOP32_RUN:
-	./obj_dir/Vtop 32
-
-top16: TOP16_TARGET TOP16_RUN
-
-TOP16_TARGET: $(LIB_TARGET)
-	verilator --cc --build --exe -f flist/top ./testbench/verilator/tb_main_top_16.cpp -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --top-module top
-
-TOP16_RUN:
-	./obj_dir/Vtop 16
-
-top8: TOP8_TARGET TOP8_RUN
-
-TOP8_TARGET: $(LIB_TARGET)
-	verilator --cc --build --exe -f flist/top ./testbench/verilator/tb_main_top_8.cpp -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --top-module top
-
-TOP8_RUN:
-	./obj_dir/Vtop 8
-
+$(TEST_TARGET): $(LIB_TARGET) clean_verilator
+	$(VERILATOR) $(VFLAGS) -f flist/$(TEST) ./testbench/verilator/tb_main_$(TEST).cpp --top-module $(TEST)
 
 clean:
-	rm -rf ./obj_dir/
-	rm -f bfp/lib/*.o $(LIB_TARGET)
+	-rm -rf ./obj_dir/
+	-rm -f bfp/lib/*.o $(LIB_TARGET)
 
-
+clean_verilator:
+	-rm -rf ./obj_dir/
 
 $(LIB_TARGET): $(LIB_OBJ)
 	ar rcs $@ $^

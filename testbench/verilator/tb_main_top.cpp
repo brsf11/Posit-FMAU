@@ -18,6 +18,9 @@ using namespace std::chrono;
 #define FLOAT_MIN -100.0
 #define FLOAT_MAX  100.0
 
+const int PositTable[4][2] ={{32,2} , {16,1}, {16,1}, {8,0}};
+const int InpreTable[4]    ={2,1,1,0};
+
 int str2num(char* str)
 {
     int num = 0;
@@ -62,6 +65,14 @@ int main(int argc, char** argv, char** env)
         bitwidth = str2num(argv[1]);
     }
 
+    if((bitwidth != 8) && (bitwidth != 16) && (bitwidth != 32))
+    {
+        cout<<"Illegal bitwidth!"<<endl;
+        return 0;
+    }
+
+    const int width = 32/bitwidth;
+
     int sampleInt = ItrNum/SpNum;
     ofstream axsA("data/axsA.mat");
     ofstream axsB("data/axsB.mat");
@@ -88,21 +99,31 @@ int main(int argc, char** argv, char** env)
         errnum[i] = 0;
     }
 
-    Posit8 A[4],B[4],C[4],D[4],pout[4];
+    Posit* A    = new Posit[4];
+    Posit* B    = new Posit[4];
+    Posit* C    = new Posit[4];
+    Posit* D    = new Posit[4];
+    Posit* pout = new Posit[4];
     float   fA[4],fB[4],fC[4],fD[4];
 
     for(int i=0;i<4;i++)
     {
-        A[i]    = Posit16();
-        B[i]    = Posit16();
-        C[i]    = Posit16();
-        D[i]    = Posit16();
-        pout[i] = Posit16();
+        A[i]    = Posit(PositTable[width][0],PositTable[width][1]);
+        B[i]    = Posit(PositTable[width][0],PositTable[width][1]);
+        C[i]    = Posit(PositTable[width][0],PositTable[width][1]);
+        D[i]    = Posit(PositTable[width][0],PositTable[width][1]);
+        pout[i] = Posit(PositTable[width][0],PositTable[width][1]);
+
+        A[i].setBits(0);
+        B[i].setBits(0);
+        C[i].setBits(0);
+        D[i].setBits(0);
+        pout[i].setBits(0);
     }
 
     for(int i=0;i<ItrNum;i++)
     {
-        for(int j=0;j<4;j++)
+        for(int j=0;j<width;j++)
         {
             fA[j] = u_rand_float(random);
             fB[j] = u_rand_float(random);
@@ -116,12 +137,11 @@ int main(int argc, char** argv, char** env)
 
 
         
-        top->A = ((A[3].getBits() << 24) |(A[2].getBits() << 16) |(A[1].getBits() << 8) | A[0].getBits());
-        // cout<<"A[1]:"<<hex<<A[1].getBits()<<" A[0]:"<<hex<<A[0].getBits()<<" A:"<<hex<<(unsigned)top->A<<endl;
-        top->B = ((B[3].getBits() << 24) |(B[2].getBits() << 16) |(B[1].getBits() << 8) | B[0].getBits());
-        top->C = ((C[3].getBits() << 24) |(C[2].getBits() << 16) |(C[1].getBits() << 8) | C[0].getBits());
-        top->D = ((D[3].getBits() << 24) |(D[2].getBits() << 16) |(D[1].getBits() << 8) | D[0].getBits());
-        top->in_pre = 1;
+        top->A = ((A[3].getBits() << bitwidth*3) | (A[2].getBits() << bitwidth*2) | (A[1].getBits() << bitwidth*1) | A[0].getBits());
+        top->B = ((B[3].getBits() << bitwidth*3) | (B[2].getBits() << bitwidth*2) | (B[1].getBits() << bitwidth*1) | B[0].getBits());
+        top->C = ((C[3].getBits() << bitwidth*3) | (C[2].getBits() << bitwidth*2) | (C[1].getBits() << bitwidth*1) | C[0].getBits());
+        top->D = ((D[3].getBits() << bitwidth*3) | (D[2].getBits() << bitwidth*2) | (D[1].getBits() << bitwidth*1) | D[0].getBits());
+        top->in_pre = InpreTable[width];
         
         for(int j=0;j<4;j++)
         {
@@ -131,14 +151,14 @@ int main(int argc, char** argv, char** env)
             top->eval();
         }
 
-        for(int j=0;j<4;j++)
+        for(int j=0;j<width;j++)
         {
-           pout[j].setBits(((unsigned)top->out_r >> 8*j) & 0x000000ff);
+           pout[j].setBits(((unsigned)top->out_r >> bitwidth*j) & ((1LL << bitwidth) - 1LL));
         }
         // cout<<hex<<"out_r:"<<(unsigned)top->out_r<<" pout[1]:"<<pout[1].getBits()<<" pout[0]:"<<pout[0].getBits()<<endl;
 
 
-        for(int j=0;j<4;j++)
+        for(int j=0;j<width;j++)
         {
             temp[j] = pout[j].getFloat() - (fA[j] * fB[j] + fC[j] * fD[j]);
             if(temp[j] != 0)
@@ -184,7 +204,7 @@ int main(int argc, char** argv, char** env)
     cout<<"Max Error   = "<<MaxEr<<endl;
     cout<<"ME          = "<<ME<<endl;
     cout<<"MSE         = "<<MSE<<endl;
-    cout<<"ERATE       = "<<ERATE/4<<endl;
+    cout<<"ERATE       = "<<ERATE/width<<endl;
     cout<<"PSNR        = "<<PSNR<<endl;
     
     time_point<system_clock,sec_type> after = time_point_cast<sec_type>(system_clock::now());
@@ -200,6 +220,12 @@ int main(int argc, char** argv, char** env)
     res.close();
     err.close();
     ser.close();
+
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete pout;
 
     delete top;
     delete contextp;
