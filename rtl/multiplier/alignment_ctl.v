@@ -87,6 +87,18 @@ always@(*) begin
                 exp_align_ctl[19:0] = 6'd58 - exp_align[19:0];
             end
         end
+        default:begin
+            exp_align[19:0] = exp_E[15:0] + exp_F[15:0];
+            exp_align[19:0] = exp_E[15:0] + exp_F[15:0];
+            if (exp_align[19]) begin
+                swap[3] = 1'b1;
+                exp_align_ctl[19:0] = 6'd58 + exp_align[19:0];
+            end
+            else begin
+                swap[3] = 1'b0;
+                exp_align_ctl[19:0] = 6'd58 - exp_align[19:0];
+            end
+        end
     endcase   
 end
 endmodule

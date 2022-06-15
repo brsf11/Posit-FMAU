@@ -31,6 +31,10 @@ always@(*) begin
             reg_exp_E1[19:0] = {exp_A[15],exp_A[15:0]} + {exp_B[15],exp_B[15:0]};
             reg_exp_F1[19:0] = {exp_C[15],exp_C[15:0]} + {exp_D[15],exp_D[15:0]};
         end
+        default:begin
+            reg_exp_E1[19:0] = {exp_A[15],exp_A[15:0]} + {exp_B[15],exp_B[15:0]};
+            reg_exp_F1[19:0] = {exp_C[15],exp_C[15:0]} + {exp_D[15],exp_D[15:0]};
+        end
     endcase
 end
 

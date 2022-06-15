@@ -51,6 +51,13 @@ always@(*) begin
             mant_small_al[127:0] = mant_small[127:0] << ctl[19:0];
             mant_pl = mant_big[115:59] + mant_small_al[115:59];
         end
+        default:begin
+            mant_big[127:0] = swap[3] ? {12'b0,mant_F[55:0],60'b0} : {12'b0,mant_E[55:0],60'b0};
+            mant_small[127:0] = swap[3] ? {70'b0,mant_E[55:0],2'b0} : {12'b0,mant_F[55:0],60'b0};
+            
+            mant_small_al[127:0] = mant_small[127:0] << ctl[19:0];
+            mant_pl = mant_big[115:59] + mant_small_al[115:59];
+        end
     endcase
 end
 

@@ -6,7 +6,7 @@ module fulladder(
     input Ci
     
 );
-wire s1,s2,s3;
+wire S1,S2,S3;
 xor(Sum,A,B,Ci);
 and(S1,A,B);
 xor(S2,A,B);

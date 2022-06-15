@@ -1,4 +1,14 @@
-cflags = -I./bfp/lib/
+CC = gcc
+CXX = g++
+FLAGS = -Ilib -Itest -O2 -Wall -g
+CFLAGS = -std=c99 $(FLAGS)
+CXXFLAGS = -std=c++11 $(FLAGS)
+
+LIB_TARGET = lib/libbfp.a
+LIB_OBJ = bfp/lib/posit.o bfp/lib/pack.o bfp/lib/util.o bfp/lib/op1.o bfp/lib/op2.o
+
+VCFLAGS = -I/home/brsf11/Code/Posit-FMAU/bfp/lib/ 
+VLFLAGS = -lbfp -L../lib/
 
 all: top
 
@@ -21,14 +31,26 @@ build_UnsignedMultiplier7x7:
 run_UnsignedMultiplier7x7:
 	./obj_dir/VUnsignedMultiplier7x7 7
 
-top: build_top run_top
+top: TOP_TARGET TOP_RUN
 
-build_top:
-	verilator --cc --build -f flist/top --exe ./testbench/verilator/tb_main_top.cpp -CFLAGS $(cflags) -Wno-UNOPTFLAT --autoflush --top-module top
-	echo "\n\n\n\n"
+TOP_TARGET: $(LIB_TARGET)
+	verilator --cc --build --exe -f flist/top ./testbench/verilator/tb_main_top.cpp -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --top-module top
 
-run_top:
-	./obj_dir/top 32
+TOP_RUN:
+	./obj_dir/Vtop 32
+
 
 clean:
-	-rm -rf ./obj_dir/
+	rm -rf ./obj_dir/
+	rm -f bfp/lib/*.o $(LIB_TARGET)
+
+
+
+$(LIB_TARGET): $(LIB_OBJ)
+	ar rcs $@ $^
+
+%.o: %.cpp
+	$(CXX) -o $@ $(CXXFLAGS) -c $^
+
+%.o: %.c
+	$(CC) -o $@ $(CFLAGS) -c $^

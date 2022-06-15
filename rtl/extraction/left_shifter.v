@@ -33,6 +33,9 @@ always @(*) begin
         2'b10:begin
             shift_tmp = in[31:0] << (shift1+1);
         end
+        default:begin
+            shift_tmp = in[31:0] << (shift1+1);
+        end
     endcase
 end
 //genvar i;

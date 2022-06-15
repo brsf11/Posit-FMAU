@@ -8,11 +8,12 @@
 #include<cmath>
 #include<random>
 #include<chrono>
+#include<limits>
 using namespace std;
 using namespace std::chrono;
 
-#define ItrNum 10000000
-#define SpNum 1000
+#define ItrNum 1000000
+#define SpNum 100
 
 int str2num(char* str)
 {
@@ -61,6 +62,8 @@ int main(int argc, char** argv, char** env)
     int sampleInt = ItrNum/SpNum;
     ofstream axsA("data/axsA.mat");
     ofstream axsB("data/axsB.mat");
+    ofstream axsC("data/axsC.mat");
+    ofstream axsD("data/axsD.mat");
 
     ofstream sres("data/sres.mat");
     ofstream errn("data/errn.mat");
@@ -70,7 +73,7 @@ int main(int argc, char** argv, char** env)
     time_point<system_clock,sec_type> before = time_point_cast<sec_type>(system_clock::now());
     
     default_random_engine random(before.time_since_epoch().count());
-    uniform_real_distribution<float> u_rand_float(FLOAT_MIN, FLOAT_MAX);
+    uniform_real_distribution<float> u_rand_float(numeric_limits<float>::min(), numeric_limits<float>::max());
 
     long long out,tempA,tempB,errNumTol=0;
 
@@ -82,7 +85,7 @@ int main(int argc, char** argv, char** env)
         errnum[i] = 0;
     }
 
-    Posit32 A,B,C,D,out = Posit32();
+    Posit32 A,B,C,D,pout = Posit32();
     float   fA,fB,fC,fD;
 
     for(int i=0;i<ItrNum;i++)
@@ -104,7 +107,7 @@ int main(int argc, char** argv, char** env)
         top->D = D.getBits();
         top->in_pre = 2;
         
-        for(int j=0;j<4;j++)
+        for(int j=0;j<5;j++)
         {
             top->clk = 0;
             top->eval();
@@ -112,9 +115,9 @@ int main(int argc, char** argv, char** env)
             top->eval();
         }
         
-        out.setBits((unsigned)top->out_r);
+        pout.setBits((unsigned)top->out_r);
 
-        temp = out.getFloat() - (fA * fB + fC * fD);
+        temp = pout.getFloat() - (fA * fB + fC * fD);
         if(temp != 0)
         {
             errNumTol++;
@@ -128,9 +131,13 @@ int main(int argc, char** argv, char** env)
         }
         if(i%sampleInt == 0)
         {
-            axsA<<tempA<<" ";
-            axsB<<tempB<<" ";
-            sres<<(int)top->out<<" ";
+            cout<<"Sample:"<<i/sampleInt<<" "<<(unsigned)top->out_r<<endl;
+
+            axsA<<fA<<" ";
+            axsB<<fB<<" ";
+            axsC<<fC<<" ";
+            axsD<<fD<<" ";
+            sres<<pout.getFloat()<<" ";
         }
     }
 
@@ -159,6 +166,8 @@ int main(int argc, char** argv, char** env)
 
     axsA.close();
     axsB.close();
+    axsC.close();
+    axsD.close();
     sres.close();
     errn.close();
 

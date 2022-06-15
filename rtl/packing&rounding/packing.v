@@ -130,6 +130,19 @@ always@(*) begin
             rnd_ulp_REM7 = (regime[9:0] < 28) ? ulp_REM7 : REM7[37:7];
             out_r = {s[3],rnd_ulp_REM7};
         end
+        default:begin
+            exp[19:0] = swap[3] ? (exp_F[19:0] + mant[67] + 1) : (exp_E[19:0] + mant[67] + 1);
+            regime[19:0] = exp[19] ? (-exp[19:2]) : (exp[19:2]+1);
+            REM7 = mant[67] ? ({{32{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]) : ({{16{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]);
+            L1[0] = REM7[7];
+            G1[0] = REM7[6];
+            R1[0] = REM7[5];
+            St1[0] = REM7[4];
+            ulp1[0] = ((G1[0] & (R1[0] | St1[0])) | (L1[0] & G1[0] & ~(R1[0] | St1[0])));
+            ulp_REM7 = REM7[37:7] + ulp1[0];
+            rnd_ulp_REM7 = (regime[9:0] < 28) ? ulp_REM7 : REM7[37:7];
+            out_r = {s[3],rnd_ulp_REM7};
+        end
     endcase
 end
 
