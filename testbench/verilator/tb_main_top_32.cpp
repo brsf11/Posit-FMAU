@@ -12,8 +12,11 @@
 using namespace std;
 using namespace std::chrono;
 
-#define ItrNum 1000000
+#define ItrNum 100
 #define SpNum 100
+
+#define FLOAT_MIN -100.0
+#define FLOAT_MAX  100.0
 
 int str2num(char* str)
 {
@@ -73,7 +76,7 @@ int main(int argc, char** argv, char** env)
     time_point<system_clock,sec_type> before = time_point_cast<sec_type>(system_clock::now());
     
     default_random_engine random(before.time_since_epoch().count());
-    uniform_real_distribution<float> u_rand_float(numeric_limits<float>::min(), numeric_limits<float>::max());
+    uniform_real_distribution<float> u_rand_float(FLOAT_MIN,FLOAT_MAX);
 
     long long out,tempA,tempB,errNumTol=0;
 
@@ -102,12 +105,14 @@ int main(int argc, char** argv, char** env)
 
         
         top->A = A.getBits();
+        cout<<"A: "<<hex<<(unsigned)top->A<<" pA: "<<hex<<A.getBits()<<endl;
         top->B = B.getBits();
+        cout<<"B: "<<hex<<(unsigned)top->B<<" pB: "<<hex<<B.getBits()<<endl;
         top->C = C.getBits();
         top->D = D.getBits();
         top->in_pre = 2;
         
-        for(int j=0;j<5;j++)
+        for(int j=0;j<4;j++)
         {
             top->clk = 0;
             top->eval();
@@ -131,12 +136,13 @@ int main(int argc, char** argv, char** env)
         }
         if(i%sampleInt == 0)
         {
-            cout<<"Sample:"<<i/sampleInt<<" "<<(unsigned)top->out_r<<endl;
+            cout<<"Sample:"<<i/sampleInt<<endl;
 
             axsA<<fA<<" ";
             axsB<<fB<<" ";
             axsC<<fC<<" ";
             axsD<<fD<<" ";
+            err<<temp<<" ";
             sres<<pout.getFloat()<<" ";
         }
     }
