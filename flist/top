@@ -32,4 +32,5 @@ rtl/multiplier/exp_adder.v
 
 rtl/packing&rounding/packing.v
 
+rtl/control.v
 rtl/top.v

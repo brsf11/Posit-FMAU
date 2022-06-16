@@ -34,7 +34,10 @@ always @(*) begin
             shift_tmp = in[31:0] << (shift1+1);
         end
         default:begin
-            shift_tmp = in[31:0] << (shift1+1);
+            shift_tmp[7:0] = {in[7:0]} <<     (shift1+1);
+            shift_tmp[15:8] = {in[15:8]} <<   (shift2+1);
+            shift_tmp[23:16] = {in[23:16]} << (shift3+1);
+            shift_tmp[31:24] = {in[31:24]} << (shift4+1);
         end
     endcase
 end

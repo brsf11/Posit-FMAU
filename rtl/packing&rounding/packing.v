@@ -2,31 +2,16 @@ module packing(
 
     input   wire    [1:0]   in_pre,
     input   wire    [67:0]  mant,
-    input   wire    [3:0]   swap,
-    input   wire    [19:0]  exp_E,
-    input   wire    [19:0]  exp_F,
-    input   wire    [3:0]   s_A,s_B,s_C,s_D,
+    input   wire    [19:0]  exp,
+    input   wire    [3:0]   s,
     output  reg    [31:0]  out_r
 );
 
-reg [19:0] exp,regime;
-wire [3:0] s;
+reg [19:0] regime;
 reg [19:0] REM1,REM2,REM3,REM4;
 reg [36:0] REM5,REM6;
 reg [69:0] REM7;
-wire [3:0] s_E,s_F;
-assign s_E[0] = s_A[0] ^ s_B[0];
-assign s_E[1] = s_A[1] ^ s_B[1];
-assign s_E[2] = s_A[2] ^ s_B[2];
-assign s_E[3] = s_A[3] ^ s_B[3];
-assign s_F[0] = s_C[0] ^ s_D[0];
-assign s_F[1] = s_C[1] ^ s_D[1];
-assign s_F[2] = s_C[2] ^ s_D[2];
-assign s_F[3] = s_C[3] ^ s_D[3];
-assign s[0] = swap[0] ? s_F[0] : s_E[0];
-assign s[1] = swap[1] ? s_F[1] : s_E[1];
-assign s[2] = swap[2] ? s_F[2] : s_E[2];
-assign s[3] = swap[3] ? s_F[3] : s_E[3];
+reg    [31:0]  out;
 reg [3:0] L1,G1,R1,St1,ulp1;
 reg [6:0] rnd_ulp_REM1,rnd_ulp_REM2,rnd_ulp_REM3,rnd_ulp_REM4;
 reg [6:0] ulp_REM1,ulp_REM2,ulp_REM3,ulp_REM4;
@@ -38,10 +23,6 @@ always@(*) begin
     case(in_pre)
         2'b00:begin
                      
-            exp[4:0] = swap[0] ? (exp_F[4:0] + mant[16] +1) : (exp_E[4:0] + mant[16] + 1);
-            exp[9:5] = swap[1] ? (exp_F[9:5] + mant[33] + 1) : (exp_E[9:5] + mant[33] + 1);
-            exp[14:10] = swap[2] ? (exp_F[14:10] + mant[50] + 1) : (exp_E[14:10] + mant[50] + 1);
-            exp[19:15] = swap[3] ? (exp_F[19:15] + mant[67] + 1) : (exp_E[19:15] + mant[67] + 1);
             regime[4:0] = exp[4] ? (-exp[4:0]) : (exp[4:0]+1);
             regime[9:5] = exp[9] ? (-exp[9:5]) : (exp[9:5]+1);
             regime[14:10] = exp[14] ? (-exp[14:10]) : (exp[14:10]+1);
@@ -84,12 +65,13 @@ always@(*) begin
             ulp_REM4 = REM4[11:5] + ulp1[3];
             rnd_ulp_REM4 = (regime[19:15] < 6) ? ulp_REM4 : REM4[11:5];
 
-            out_r = {s[3],rnd_ulp_REM4,s[2],rnd_ulp_REM3,s[1],rnd_ulp_REM2,s[0],rnd_ulp_REM1};
+            out_r[7:0]   = s[0]?{s[0],(-rnd_ulp_REM1)}:{s[0],rnd_ulp_REM1};
+            out_r[15:8]  = s[1]?{s[1],(-rnd_ulp_REM2)}:{s[1],rnd_ulp_REM2};
+            out_r[23:16] = s[2]?{s[2],(-rnd_ulp_REM1)}:{s[2],rnd_ulp_REM3};
+            out_r[31:24] = s[3]?{s[3],(-rnd_ulp_REM4)}:{s[3],rnd_ulp_REM4};
         end
         2'b01:begin
-            exp[9:0] = swap[1] ? (exp_F[9:0] + mant[33] + 1) : (exp_E[9:0] + mant[33] + 1);
 
-            exp[19:10] = swap[3] ? (exp_F[19:10] + mant[67] + 1) : (exp_E[19:10] + mant[67] + 1);
 
             regime[9:0] = exp[9] ? (-exp[9:1]) : (exp[9:1]+1);
 
@@ -118,7 +100,7 @@ always@(*) begin
             out_r = {s[3],rnd_ulp_REM6,s[1],rnd_ulp_REM5};
         end
         2'b10:begin
-            exp[19:0] = swap[3] ? (exp_F[19:0] + mant[67] + 1) : (exp_E[19:0] + mant[67] + 1);
+
             regime[19:0] = exp[19] ? (-exp[19:2]) : (exp[19:2]+1);
             REM7 = mant[67] ? ({{32{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]) : ({{16{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]);
             L1[0] = REM7[7];
@@ -131,17 +113,20 @@ always@(*) begin
             out_r = {s[3],rnd_ulp_REM7};
         end
         default:begin
-            exp[19:0] = swap[3] ? (exp_F[19:0] + mant[67] + 1) : (exp_E[19:0] + mant[67] + 1);
-            regime[19:0] = exp[19] ? (-exp[19:2]) : (exp[19:2]+1);
-            REM7 = mant[67] ? ({{32{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]) : ({{16{~exp[19]}},exp[19],exp[1:0],mant[67:33]} >> regime[19:0]);
-            L1[0] = REM7[7];
-            G1[0] = REM7[6];
-            R1[0] = REM7[5];
-            St1[0] = REM7[4];
-            ulp1[0] = ((G1[0] & (R1[0] | St1[0])) | (L1[0] & G1[0] & ~(R1[0] | St1[0])));
-            ulp_REM7 = REM7[37:7] + ulp1[0];
-            rnd_ulp_REM7 = (regime[9:0] < 28) ? ulp_REM7 : REM7[37:7];
-            out_r = {s[3],rnd_ulp_REM7};
+            regime=0;
+            REM1=0;
+            REM2=0;
+            REM3=0;
+            REM4=0;
+            REM5=0;
+            REM6=0;
+            REM7=0;
+            L1=0;G1=0;R1=0;St1=0;ulp1=0;
+            rnd_ulp_REM1=0;rnd_ulp_REM2=0;rnd_ulp_REM3=0;rnd_ulp_REM4=0;
+            ulp_REM1=0;ulp_REM2=0;ulp_REM3=0;ulp_REM4=0;
+            ulp_REM5=0;ulp_REM6=0;rnd_ulp_REM5=0;rnd_ulp_REM6=0;
+            ulp_REM7=0;rnd_ulp_REM7=0;
+            out_r=0 ;
         end
     endcase
 end

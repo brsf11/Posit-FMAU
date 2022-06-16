@@ -48,17 +48,11 @@ always @(*) begin
             rg_exp_tmp = op_neg[30] ? {9'b0,(cps-2),exp_mant[31:30]} : {9'b0,(-cps+1),exp_mant[31:30]} ;
         end
         default:begin
-            mant_tmp = {1'b1,exp_mant[29:2]};
-            rg_exp_tmp = op_neg[30] ? {9'b0,(cps-2),exp_mant[31:30]} : {9'b0,(-cps+1),exp_mant[31:30]} ;
+            mant_tmp=0;
+            rg_exp_tmp=0;
         end
+
     endcase
 end
-//always @(posedge clk) begin
-//    mant <= mant_tmp;
-//    s[0] <= in[7];
-//    s[1] <= in[15];
-//    s[2] <= in[23];
-//    s[3] <= in[31];
-//    rg_exp <= rg_exp_tmp;
-//end
+
 endmodule

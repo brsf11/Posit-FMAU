@@ -18,8 +18,8 @@ using namespace std::chrono;
 #define FLOAT_MIN -100.0
 #define FLOAT_MAX  100.0
 
-const int PositTable[4][2] ={{32,2} , {16,1}, {16,1}, {8,0}};
-const int InpreTable[4]    ={2,1,1,0};
+const int PositTable[5][2] ={{0,0} ,{32,2} , {16,1}, {16,1}, {8,0}};
+const int InpreTable[5]    ={0,2,1,1,0};
 
 int str2num(char* str)
 {
@@ -72,6 +72,7 @@ int main(int argc, char** argv, char** env)
     }
 
     const int width = 32/bitwidth;
+    cout<<"width = "<<width<<endl;
 
     int sampleInt = ItrNum/SpNum;
     ofstream axsA("data/axsA.mat");
@@ -135,19 +136,24 @@ int main(int argc, char** argv, char** env)
             D[j].set(fD[j]);
         }
 
-
+        cout<<hex<<A[3].getBits()<<" "<<A[2].getBits()<<" "<<A[1].getBits()<<" "<<A[0].getBits()<<" "<<endl;
         
         top->A = ((A[3].getBits() << bitwidth*3) | (A[2].getBits() << bitwidth*2) | (A[1].getBits() << bitwidth*1) | A[0].getBits());
+        cout<<hex<<(unsigned)top->A<<endl<<dec;
         top->B = ((B[3].getBits() << bitwidth*3) | (B[2].getBits() << bitwidth*2) | (B[1].getBits() << bitwidth*1) | B[0].getBits());
         top->C = ((C[3].getBits() << bitwidth*3) | (C[2].getBits() << bitwidth*2) | (C[1].getBits() << bitwidth*1) | C[0].getBits());
         top->D = ((D[3].getBits() << bitwidth*3) | (D[2].getBits() << bitwidth*2) | (D[1].getBits() << bitwidth*1) | D[0].getBits());
         top->in_pre = InpreTable[width];
+
+        top->start = 0;
         
-        for(int j=0;j<4;j++)
+        for(int j=0;j<6;j++)
         {
             top->clk = 0;
+            top->start = (j == 0);
             top->eval();
             top->clk = 1;
+            top->start = (j == 0);
             top->eval();
         }
 
