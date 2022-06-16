@@ -1,5 +1,6 @@
 #include "Vtop.h"
 #include "verilated.h"
+#include "verilated_vcd_c.h"
 
 #include "posit.h"
 
@@ -21,6 +22,14 @@ using namespace std::chrono;
 const int PositTable[5][2] ={{0,0} ,{32,2} , {16,1}, {16,1}, {8,0}};
 const int InpreTable[5]    ={0,2,1,1,0};
 
+vluint64_t main_time = 0;
+
+double sc_time_stamp()
+ {
+     return main_time;
+ }
+
+
 int str2num(char* str)
 {
     int num = 0;
@@ -41,7 +50,13 @@ int main(int argc, char** argv, char** env)
 {
     VerilatedContext* contextp = new VerilatedContext;
     contextp->commandArgs(argc,argv);
+    contextp->traceEverOn(true);
     Vtop* top = new Vtop{contextp, "TOP"};
+
+    VerilatedVcdC* tfp = new VerilatedVcdC();
+
+    top->trace(tfp, 0);
+    tfp->open("wave/wave.vcd");
 
     ofstream res("data/res.mat");
     ofstream err("data/err.mat");
@@ -144,6 +159,7 @@ int main(int argc, char** argv, char** env)
         top->C = ((C[3].getBits() << bitwidth*3) | (C[2].getBits() << bitwidth*2) | (C[1].getBits() << bitwidth*1) | C[0].getBits());
         top->D = ((D[3].getBits() << bitwidth*3) | (D[2].getBits() << bitwidth*2) | (D[1].getBits() << bitwidth*1) | D[0].getBits());
         top->in_pre = InpreTable[width];
+        top->out_pre = 0;
 
         top->start = 0;
         
@@ -152,9 +168,13 @@ int main(int argc, char** argv, char** env)
             top->clk = 0;
             top->start = (j == 0);
             top->eval();
+            tfp->dump(main_time); //dump wave
+            main_time++;
             top->clk = 1;
             top->start = (j == 0);
             top->eval();
+            tfp->dump(main_time); //dump wave
+            main_time++;
         }
 
         for(int j=0;j<width;j++)
@@ -232,6 +252,9 @@ int main(int argc, char** argv, char** env)
     delete C;
     delete D;
     delete pout;
+
+    top->final();
+    tfp->close();
 
     delete top;
     delete contextp;
