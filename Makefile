@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 VERILATOR = verilator
-FLAGS = -Ilib -Itest -O2 -Wall -g
+FLAGS = -Ilib -Itest -O0 -Wall -g
 CFLAGS = -std=c99 $(FLAGS)
 CXXFLAGS = -std=c++11 $(FLAGS)
 
@@ -12,7 +12,7 @@ TEST = top
 TEST_TARGET = ./obj_dir/V$(TEST)
 TEST_WIDTH = 32
 
-VCFLAGS = -I/home/brsf11/Code/Posit-FMAU/bfp/lib/ 
+VCFLAGS = -I/home/brsf11/Code/Posit-FMAU/bfp/lib/ -g -O0
 VLFLAGS = -lbfp -L../lib/
 VFLAGS  = -j 16 --cc --build --exe -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --trace
 
@@ -23,6 +23,8 @@ $(TEST): $(TEST_TARGET)
 
 $(TEST_TARGET): $(LIB_TARGET) clean_verilator
 	$(VERILATOR) $(VFLAGS) -f flist/$(TEST) ./testbench/verilator/tb_main_$(TEST).cpp --top-module $(TEST)
+
+.PHONY : clean clean_verilator wave
 
 wave:
 	gtkwave wave/wave.vcd

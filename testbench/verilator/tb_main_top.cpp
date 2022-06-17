@@ -62,8 +62,10 @@ int main(int argc, char** argv, char** env)
     ofstream err("data/err.mat");
     ofstream ser("data/ser.mat");
 
-    double TolEr,TolSE,MaxEr,temp[4];
+    double TolEr,TolSE,MaxEr,temp;
     double ME,MSE,PSNR,ERATE;
+
+    unsigned fcase = 0;
 
     TolEr = 0;
     TolSE = 0;
@@ -107,13 +109,6 @@ int main(int argc, char** argv, char** env)
 
     long long out,tempA,tempB,errNumTol=0;
 
-    long long errnum[33];
-    double errrate[33];
-
-    for(int i=0;i<33;i++)
-    {
-        errnum[i] = 0;
-    }
 
     Posit* A    = new Posit[4];
     Posit* B    = new Posit[4];
@@ -145,21 +140,18 @@ int main(int argc, char** argv, char** env)
             fB[j] = u_rand_float(random);
             fC[j] = u_rand_float(random);
             fD[j] = u_rand_float(random);
-            A[j].set(fA[j]);
-            B[j].set(fB[j]);
-            C[j].set(fC[j]);
-            D[j].set(fD[j]);
+            A[j].set((float)(fA[j]/10.0));
+            B[j].set((float)(fB[j]/10.0));
+            C[j].set((float)(fC[j]/10.0));
+            D[j].set((float)(fD[j]/10.0));
         }
-
-        cout<<hex<<A[3].getBits()<<" "<<A[2].getBits()<<" "<<A[1].getBits()<<" "<<A[0].getBits()<<" "<<endl;
         
         top->A = ((A[3].getBits() << bitwidth*3) | (A[2].getBits() << bitwidth*2) | (A[1].getBits() << bitwidth*1) | A[0].getBits());
-        cout<<hex<<(unsigned)top->A<<endl<<dec;
         top->B = ((B[3].getBits() << bitwidth*3) | (B[2].getBits() << bitwidth*2) | (B[1].getBits() << bitwidth*1) | B[0].getBits());
         top->C = ((C[3].getBits() << bitwidth*3) | (C[2].getBits() << bitwidth*2) | (C[1].getBits() << bitwidth*1) | C[0].getBits());
         top->D = ((D[3].getBits() << bitwidth*3) | (D[2].getBits() << bitwidth*2) | (D[1].getBits() << bitwidth*1) | D[0].getBits());
         top->in_pre = InpreTable[width];
-        top->out_pre = 0;
+        top->out_pre = InpreTable[width];
 
         top->start = 0;
         
@@ -181,48 +173,48 @@ int main(int argc, char** argv, char** env)
         {
            pout[j].setBits(((unsigned)top->out_r >> bitwidth*j) & ((1LL << bitwidth) - 1LL));
         }
-        // cout<<hex<<"out_r:"<<(unsigned)top->out_r<<" pout[1]:"<<pout[1].getBits()<<" pout[0]:"<<pout[0].getBits()<<endl;
 
 
         for(int j=0;j<width;j++)
         {
-            temp[j] = pout[j].getFloat() - (fA[j] * fB[j] + fC[j] * fD[j]);
-            if(temp[j] != 0)
+            if(abs((A[j].getFloat() * B[j].getFloat()) + (C[j].getFloat() * D[j].getFloat()))>64)
+            {
+                fcase++;
+                continue;
+            }
+
+            temp = pout[j].getFloat() - ((A[j].getFloat() * B[j].getFloat()) + (C[j].getFloat() * D[j].getFloat()));
+            // temp = pout[j].getFloat() - ((fA[j] * fB[j] * 0.01) + (fC[j] * fD[j] * 0.01));
+            if(temp != 0)
             {
                 errNumTol++;
-                errnum[(unsigned)log2(abs(temp[j]))]++;
             }
-            TolEr += temp[j];
-            TolSE += (temp[j]*temp[j]);
-            if(abs(temp[j]) > MaxEr)
+            TolEr += temp;
+            TolSE += (temp*temp);
+            if(fabs(temp) > MaxEr)
             {
-                MaxEr = abs(temp[j]);
+                MaxEr = fabs(temp);
             }
             if(i%sampleInt == 0)
             {
                 cout<<"Sample:"<<dec<<i/sampleInt<<endl;
-
+                cout<<"A["<<j<<"]="<<A[j].getFloat()<<" B["<<j<<"]="<<B[j].getFloat()<<" C["<<j<<"]="<<C[j].getFloat()<<" D["<<j<<"]="<<D[j].getFloat()<<" out["<<j<<"]="<<pout[j].getFloat()<<endl;
+                cout<<"temp="<<temp<<endl;
                 axsA<<fA[j]<<" ";
                 axsB<<fB[j]<<" ";
                 axsC<<fC[j]<<" ";
                 axsD<<fD[j]<<" ";
-                err<<temp[j]<<" ";
+                err<<temp<<" ";
                 sres<<pout[j].getFloat()<<" ";
             }
         }
         
     }
 
-    for(int i=0;i<33;i++)
-    {
-        errrate[i] = (double)errnum[i]/(double)errNumTol;
-        errn<<errrate[i]<<" ";
-    }
-
-    ME  = (double)TolEr/(double)ItrNum;
-    MSE = (double)TolSE/(double)ItrNum;
+    ME  = (double)TolEr/(double)(ItrNum*width - fcase);
+    MSE = (double)TolSE/(double)(ItrNum*width - fcase);
     PSNR = 10*log10((double)(MaxEr*MaxEr)/MSE);
-    ERATE = (double)errNumTol/(double)ItrNum;
+    ERATE = (double)errNumTol/(double)(ItrNum*width - fcase);
 
     cout<<"Utop"<<endl;
     cout<<"Total Error = "<<TolEr<<endl;
@@ -230,7 +222,7 @@ int main(int argc, char** argv, char** env)
     cout<<"Max Error   = "<<MaxEr<<endl;
     cout<<"ME          = "<<ME<<endl;
     cout<<"MSE         = "<<MSE<<endl;
-    cout<<"ERATE       = "<<ERATE/width<<endl;
+    cout<<"ERATE       = "<<ERATE<<endl;
     cout<<"PSNR        = "<<PSNR<<endl;
     
     time_point<system_clock,sec_type> after = time_point_cast<sec_type>(system_clock::now());
@@ -241,7 +233,6 @@ int main(int argc, char** argv, char** env)
     axsC.close();
     axsD.close();
     sres.close();
-    errn.close();
 
     res.close();
     err.close();
