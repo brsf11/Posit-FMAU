@@ -5,6 +5,7 @@
 #include "posit.h"
 
 #include<iostream>
+#include<iomanip>
 #include<fstream>
 #include<cmath>
 #include<random>
@@ -25,10 +26,9 @@ const int InpreTable[5]    ={0,2,1,1,0};
 vluint64_t main_time = 0;
 
 double sc_time_stamp()
- {
+{
      return main_time;
- }
-
+}
 
 int str2num(char* str)
 {
@@ -61,11 +61,12 @@ int main(int argc, char** argv, char** env)
     ofstream res("data/res.mat");
     ofstream err("data/err.mat");
     ofstream ser("data/ser.mat");
+    ofstream iss("data/issue.txt");
 
     double TolEr,TolSE,MaxEr,temp;
     double ME,MSE,PSNR,ERATE;
 
-    unsigned fcase = 0;
+    unsigned fcase,isscase = 0;
 
     TolEr = 0;
     TolSE = 0;
@@ -197,9 +198,25 @@ int main(int argc, char** argv, char** env)
             }
             if(i%sampleInt == 0)
             {
-                cout<<"Sample:"<<dec<<i/sampleInt<<endl;
-                cout<<"A["<<j<<"]="<<A[j].getFloat()<<" B["<<j<<"]="<<B[j].getFloat()<<" C["<<j<<"]="<<C[j].getFloat()<<" D["<<j<<"]="<<D[j].getFloat()<<" out["<<j<<"]="<<pout[j].getFloat()<<endl;
-                cout<<"temp="<<temp<<endl;
+                if(j==0)
+                {
+                    cout<<"Sample:"<<dec<<setw(ceil(log10(SpNum))+1)<<i/sampleInt+1<<"/"<<SpNum<<endl;
+                }
+                // cout<<"A["<<j<<"]="<<setw(10)<<fixed<<A[j].getFloat()<<" B["<<j<<"]="<<setw(10)<<fixed<<B[j].getFloat()<<" C["<<j<<"]="<<setw(10)<<fixed<<C[j].getFloat()<<" D["<<j<<"]="<<setw(10)<<fixed<<D[j].getFloat()<<" out["<<j<<"]="<<setw(10)<<fixed<<pout[j].getFloat()<<endl;
+                // cout<<"temp="<<temp<<endl;
+                if((abs(temp/pout[j].getFloat())>0.5) && (pout[j].getFloat()!=0))
+                {
+                    isscase++;
+                    iss<<"Case:"<<isscase<<endl;
+                    iss<<"A["<<j<<"]="<<setw(10)<<fixed<<A[j].getFloat()<<" B["<<j<<"]="<<setw(10)<<fixed<<B[j].getFloat()<<" C["<<j<<"]="<<setw(10)<<fixed<<C[j].getFloat()<<" D["<<j<<"]="<<setw(10)<<fixed<<D[j].getFloat()<<" out["<<j<<"]="<<setw(10)<<fixed<<pout[j].getFloat()<<endl;
+                    iss<<"temp="<<temp<<endl;
+                    iss<<"time="<<main_time<<endl;
+                    iss<<"A:   "<<hex<<(unsigned)top->A<<dec<<endl;
+                    iss<<"B:   "<<hex<<(unsigned)top->B<<dec<<endl;
+                    iss<<"C:   "<<hex<<(unsigned)top->C<<dec<<endl;
+                    iss<<"D:   "<<hex<<(unsigned)top->D<<dec<<endl;
+                    iss<<"out: "<<hex<<(unsigned)top->out_r<<dec<<endl;
+                }
                 axsA<<fA[j]<<" ";
                 axsB<<fB[j]<<" ";
                 axsC<<fC[j]<<" ";
@@ -237,6 +254,7 @@ int main(int argc, char** argv, char** env)
     res.close();
     err.close();
     ser.close();
+    iss.close();
 
     delete A;
     delete B;
