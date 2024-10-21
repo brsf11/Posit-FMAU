@@ -14,7 +14,7 @@ TEST_WIDTH = 32
 
 VCFLAGS = -I/home/brsf11/Code/Posit-FMAU/bfp/lib/ -g -O0
 VLFLAGS = -lbfp -L../lib/
-VFLAGS  = -j 16 --cc --build --exe -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH --autoflush --trace
+VFLAGS  = -j 16 --cc --build --exe -CFLAGS "$(VCFLAGS)" -LDFLAGS "$(VLFLAGS)" -Wno-UNOPTFLAT -Wno-WIDTHCONCAT -Wno-WIDTH -Wno-MULTIDRIVEN --autoflush --trace
 
 all: $(TEST)
 
