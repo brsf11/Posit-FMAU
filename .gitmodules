@@ -1,3 +1,3 @@
 [submodule "bfp"]
 	path = bfp
-	url = git@github.com:brsf11/bfp.git
+	url = https://github.com/brsf11/bfp.git
